@@ -6,6 +6,7 @@
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <openssl/hmac.h>
 
 void handleErrors() {
     ERR_print_errors_fp(stderr);
@@ -70,4 +71,13 @@ void decrypt(const std::string& ciphertext, const unsigned char* key, const unsi
     EVP_CIPHER_CTX_free(ctx);
 
     decryptedText.resize(plaintext_len); // Adjust size to actual plaintext length
+}
+void generateHMAC(const std::string& data, const unsigned char* key, std::string& hmac) {
+    unsigned int len;
+    unsigned char result[EVP_MAX_MD_SIZE];
+
+    HMAC(EVP_sha256(), key, strlen(reinterpret_cast<const char*>(key)),
+         reinterpret_cast<const unsigned char*>(data.c_str()), data.size(), result, &len);
+
+    hmac.assign(reinterpret_cast<char*>(result), len);
 }
