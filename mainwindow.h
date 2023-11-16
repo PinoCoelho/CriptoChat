@@ -8,10 +8,15 @@
 #include <openssl/aes.h>
 #include <openssl/rand.h>
 #include <openssl/evp.h>
+#include <openssl/hmac.h>
+#include <openssl/evp.h>
+#include <string>
 
 void handleErrors();
 void encrypt(const std::string& plaintext, const unsigned char* key, const unsigned char* iv, std::string& ciphertext);
 void decrypt(const std::string& ciphertext, const unsigned char* key, const unsigned char* iv, std::string& decryptedText);
+void generateHMAC(const std::string& data, const unsigned char* key, std::string& hmac);
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
