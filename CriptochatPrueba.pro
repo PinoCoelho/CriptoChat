@@ -16,15 +16,15 @@ LIBS += -lssl -lcrypto
 
 SOURCES += \
     gui_server.cpp \
-    main.cpp \
-    mainwindow.cpp
+    main_Server.cpp \
+    mainwindow_Server.cpp
 
 HEADERS += \
     gui_server.h \
-    mainwindow.h
+    mainwindow_Server.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow_Server.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAINWINDOW_SERVER_H
+#define MAINWINDOW_SERVER_H
 
 #include <QMainWindow>
 #include <QPushButton>
@@ -54,4 +54,4 @@ private:
     void decryptText();
 };
 
-#endif // MAINWINDOW_H
+#endif // MAINWINDOW_SERVER_H

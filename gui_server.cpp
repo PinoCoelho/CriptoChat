@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "mainwindow_Server.h"
 #include <QApplication>
 #include <iostream>
 #include <fstream>
