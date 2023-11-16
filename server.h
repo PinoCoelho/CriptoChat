@@ -19,12 +19,14 @@ public slots:
     void nuevaConexion(); // Declaración de la función nuevaConexion
     void recibirMensaje(); // Declaración de la función recibirMensaje
     void descifrarTexto();
+    void cargarArchivoEncriptado();
 
 private:
     QTcpServer *server;
     QTcpSocket *socket;
     QTextEdit *bandejaEntrada;
     QPushButton *descifrarButton;
+    QPushButton *cargarArchivoButton;
 
     void setupUI();
 };

@@ -28,6 +28,7 @@ void Cliente::setupUI() {
 
 void Cliente::convertirTextoAArchivo() {
     QString textToConvert = mensajeInput->toPlainText();
+    qDebug()<<"textToconvert "<<textToConvert;
     QString fileName = QFileDialog::getSaveFileName(this, tr("Guardar Archivo"), "", tr("Archivos de texto (*.txt)"));
 
     if (!textToConvert.isEmpty() && !fileName.isEmpty()) {
@@ -40,6 +41,7 @@ void Cliente::convertirTextoAArchivo() {
         std::ifstream infile(filename);
         std::string fileContent((std::istreambuf_iterator<char>(infile)), std::istreambuf_iterator<char>());
         infile.close();
+        qDebug()<<"fileContent "<<fileContent;
 
         unsigned char key[16];
         unsigned char iv[AES_BLOCK_SIZE];
@@ -57,7 +59,8 @@ void Cliente::convertirTextoAArchivo() {
         // Enviar la clave y el IV al servidor
         enviarClaveYIVAlServidor(key, iv);
 
-        // Aquí podrías enviar el archivo al servidor para su desencriptación y mostrar el texto en el servidor
+        // Leer el archivo encriptado y mostrar en la GUI
+        mostrarTextoEncriptado(QString::fromStdString(filename + "_encrypted.txt"));
     } else {
         QMessageBox::warning(this, "Advertencia", "El texto está vacío o el nombre de archivo no es válido.");
     }
@@ -80,6 +83,7 @@ void Cliente::enviarMensaje() {
 
             std::string encryptedMessage;
             Encriptador::encrypt(messageText, key, iv, encryptedMessage);
+            qDebug()<<"EncryptedMessage "<<encryptedMessage;
 
             // Enviar la clave y el IV al servidor
             enviarClaveYIVAlServidor(key, iv);
@@ -107,4 +111,17 @@ void Cliente::enviarClaveYIVAlServidor(const unsigned char* key, const unsigned 
     totalData.append(ivData);
 
     socket->write(totalData);
+}
+
+void Cliente::mostrarTextoEncriptado(const QString& filePath) {
+    std::ifstream encryptedFile(filePath.toStdString());
+    std::string encryptedContent((std::istreambuf_iterator<char>(encryptedFile)), std::istreambuf_iterator<char>());
+    encryptedFile.close();
+
+    // Aquí se podría mostrar el contenido encriptado en la GUI
+    // Puedes usar un QTextEdit u otro widget para mostrar el texto encriptado
+    // Ejemplo:
+    QTextEdit* encryptedTextEdit = new QTextEdit(this);
+    encryptedTextEdit->setText(QString::fromStdString(encryptedContent));
+    // Agrega este widget a tu diseño o ventana según corresponda
 }

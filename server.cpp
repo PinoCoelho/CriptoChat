@@ -25,7 +25,11 @@ void Server::setupUI() {
     descifrarButton = new QPushButton("Descifrar", this);
     layout->addWidget(descifrarButton);
 
+    cargarArchivoButton = new QPushButton("Cargar Archivo Encriptado", this);
+    layout->addWidget(cargarArchivoButton);
+
     connect(descifrarButton, &QPushButton::clicked, this, &Server::descifrarTexto);
+    connect(cargarArchivoButton, &QPushButton::clicked, this, &Server::cargarArchivoEncriptado);
 }
 
 void Server::nuevaConexion() {
@@ -61,11 +65,41 @@ void Server::recibirMensaje() {
 void Server::descifrarTexto() {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Seleccionar archivo encriptado"), "", tr("Archivos de texto encriptados (*.txt)"));
     if (!filePath.isEmpty()) {
-        std::ifstream file(filePath.toStdString());
-        std::string fileContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        file.close();
+        std::ifstream encryptedFile(filePath.toStdString());
+        std::string encryptedContent((std::istreambuf_iterator<char>(encryptedFile)), std::istreambuf_iterator<char>());
+        encryptedFile.close();
 
-        // Aquí se podría enviar el archivo al cliente para su desencriptación y muestra del texto en el servidor
-        // Sin embargo, debes ajustar la comunicación entre el cliente y el servidor para esto.
+        // Realizar la desencriptación y mostrar el texto descifrado
+        unsigned char key[16];
+        unsigned char iv[AES_BLOCK_SIZE];
+        Encriptador::generarClaveYIV(key, iv);
+
+        std::string decryptedText;
+        Encriptador::decrypt(encryptedContent, key, iv, decryptedText);
+
+        // Muestra el texto desencriptado en la bandeja de entrada o donde desees
+        bandejaEntrada->setText(QString::fromStdString(decryptedText));
     }
 }
+
+void Server::cargarArchivoEncriptado() {
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Seleccionar archivo encriptado"), "", tr("Archivos de texto encriptados (*.txt)"));
+    if (!filePath.isEmpty()) {
+        std::ifstream encryptedFile(filePath.toStdString());
+        std::string encryptedContent((std::istreambuf_iterator<char>(encryptedFile)), std::istreambuf_iterator<char>());
+        encryptedFile.close();
+        qDebug()<<"EncryptedContent "<<encryptedContent;
+        // Realizar la desencriptación y mostrar el texto descifrado
+        unsigned char key[16];
+        unsigned char iv[AES_BLOCK_SIZE];
+        Encriptador::generarClaveYIV(key, iv);
+
+        std::string decryptedText;
+        qDebug("cualquier cosa");
+        Encriptador::decrypt(encryptedContent, key, iv, decryptedText);
+        qDebug()<<"DecryptedText " <<decryptedText;
+        // Muestra el texto desencriptado en la bandeja de entrada o donde desees
+        bandejaEntrada->setText(QString::fromStdString(decryptedText));
+    }
+}
+

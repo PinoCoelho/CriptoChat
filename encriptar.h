@@ -15,7 +15,6 @@ public:
     static void decrypt(const std::string& ciphertext, const unsigned char* key, const unsigned char* iv, std::string& decryptedText);
     static void generateHMAC(const std::string& data, const unsigned char* key, std::string& hmac);
     static void generarClaveYIV(unsigned char* key, unsigned char* iv);
-
 };
 
 #endif // ENCRIPTAR_H

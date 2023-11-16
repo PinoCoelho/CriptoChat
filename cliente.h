@@ -15,6 +15,7 @@ public:
     void enviarMensaje(); // Mover la declaración a la sección public
     void convertirTextoAArchivo();
     void enviarClaveYIVAlServidor(const unsigned char* key, const unsigned char* iv);
+    void mostrarTextoEncriptado(const QString& filePath);
     //std::string encryptAES(const std::string& plaintext, const std::string& key);
 
 signals:
