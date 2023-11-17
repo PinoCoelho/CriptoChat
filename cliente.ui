@@ -1,42 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
-  <property name="geometry">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>828</width>
-    <height>604</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
   </property>
-  <widget class="QPushButton" name="Aceptar">
-   <property name="geometry">
-    <rect>
-     <x>340</x>
-     <y>390</y>
-     <width>89</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Aceptar</string>
-   </property>
-  </widget>
-  <widget class="QPlainTextEdit" name="plainTextEdit">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>140</y>
-     <width>351</width>
-     <height>191</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QMenuBar" name="menubar" />
+  <widget class="QWidget" name="centralwidget" />
+  <widget class="QStatusBar" name="statusbar" />
  </widget>
- <resources/>
+ <pixmapfunction></pixmapfunction>
  <connections/>
 </ui>
+

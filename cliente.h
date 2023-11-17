@@ -1,33 +1,43 @@
+// cliente.h
 #ifndef CLIENTE_H
 #define CLIENTE_H
 
 #include <QWidget>
 #include <QTcpSocket>
-#include <QTextEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QTextEdit>
+#include <openssl/evp.h>
+#include <openssl/err.h>
+#include <QTcpSocket>
+#include <QMessageBox>
+
+
 
 class Cliente : public QWidget {
     Q_OBJECT
 
 public:
     explicit Cliente(QWidget *parent = nullptr);
-    void enviarMensaje(); // Mover la declaración a la sección public
-    void convertirTextoAArchivo();
-    void enviarClaveYIVAlServidor(const unsigned char* key, const unsigned char* iv);
-    void mostrarTextoEncriptado(const QString& filePath);
-    //std::string encryptAES(const std::string& plaintext, const std::string& key);
+
+public slots:
+    void convertirTexto();
+    void slotDatosRecibidos();
 
 signals:
-    void enviarMensajeSignal(); // Cambiar el nombre de la señal para evitar conflicto
+    void enviarMensajeSignal(const QString &mensaje);
 
 private:
-    QTcpSocket *socket;
     QTextEdit *mensajeInput;
     QPushButton *enviarButton;
     QPushButton *convertirButton;
+    QTcpSocket *tcpSocket;
 
     void setupUI();
+    void handleErrors();
+    void encrypt(const std::string& plaintext, const unsigned char* key, const unsigned char* iv, std::string& ciphertext);
+    void enviarMensaje();
+
 };
 
 #endif // CLIENTE_H

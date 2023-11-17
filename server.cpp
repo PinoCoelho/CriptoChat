@@ -1,25 +1,19 @@
+// server.cpp
 #include "server.h"
-#include "encriptar.h"
+#include "cliente.h"  // Asegúrate de incluir el archivo de encabezado de Cliente
 #include <QMessageBox>
-#include <iostream>
 #include <QFileDialog>
-#include <fstream>
+#include <openssl/rand.h>
 
 Server::Server(QWidget *parent) : QWidget(parent) {
     setupUI();
-    server = new QTcpServer(this);
-
-    if (!server->listen(QHostAddress::Any, 12345)) {
-        QMessageBox::critical(this, "Error", "No se pudo iniciar el servidor.");
-    } else {
-        connect(server, &QTcpServer::newConnection, this, &Server::nuevaConexion);
-    }
 }
 
 void Server::setupUI() {
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     bandejaEntrada = new QTextEdit(this);
+    bandejaEntrada->setReadOnly(true);
     layout->addWidget(bandejaEntrada);
 
     descifrarButton = new QPushButton("Descifrar", this);
@@ -30,76 +24,42 @@ void Server::setupUI() {
 
     connect(descifrarButton, &QPushButton::clicked, this, &Server::descifrarTexto);
     connect(cargarArchivoButton, &QPushButton::clicked, this, &Server::cargarArchivoEncriptado);
-}
 
-void Server::nuevaConexion() {
-    socket = server->nextPendingConnection();
-    connect(socket, &QTcpSocket::readyRead, this, &Server::recibirMensaje);
+    // Configurar el servidor y conectar la señal de nueva conexión
+    tcpServer = new QTcpServer(this);
+    connect(tcpServer, &QTcpServer::newConnection, this, &Server::nuevaConexion);
+    if (!tcpServer->listen(QHostAddress::Any, 12345)) {
+        QMessageBox::critical(this, "Error", "El servidor no pudo iniciar.");
+        close();
+    }
 }
 
 void Server::recibirMensaje() {
-    QByteArray data = socket->readAll();
+    // Implementación para recibir mensajes del cliente y mostrarlos en bandejaEntrada
+    QByteArray datos = clienteSocket->readAll();
 
-    if (data.size() >= 16 + AES_BLOCK_SIZE) {
-        // Recibimos la clave y el IV del cliente
-        unsigned char key[16];
-        unsigned char iv[AES_BLOCK_SIZE];
-        memcpy(key, data.constData(), 16);
-        memcpy(iv, data.constData() + 16, AES_BLOCK_SIZE);
-
-        // Realizamos la desencriptación si el tamaño de datos recibidos es mayor que el tamaño de clave y IV
-        if (data.size() > 16 + AES_BLOCK_SIZE) {
-            std::string encryptedText = data.mid(16 + AES_BLOCK_SIZE).toStdString();
-            std::string decryptedText;
-
-            // Realizar la desencriptación con el Encriptador y mostrar el texto desencriptado
-            Encriptador encriptador;
-            encriptador.decrypt(encryptedText, key, iv, decryptedText);
-
-            // Muestra el texto desencriptado en la bandeja de entrada o donde desees
-            bandejaEntrada->append(QString::fromStdString(decryptedText));
-        }
-    }
 }
 
-void Server::descifrarTexto() {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Seleccionar archivo encriptado"), "", tr("Archivos de texto encriptados (*.txt)"));
-    if (!filePath.isEmpty()) {
-        std::ifstream encryptedFile(filePath.toStdString());
-        std::string encryptedContent((std::istreambuf_iterator<char>(encryptedFile)), std::istreambuf_iterator<char>());
-        encryptedFile.close();
-
-        // Realizar la desencriptación y mostrar el texto descifrado
-        unsigned char key[16];
-        unsigned char iv[AES_BLOCK_SIZE];
-        Encriptador::generarClaveYIV(key, iv);
-
-        std::string decryptedText;
-        Encriptador::decrypt(encryptedContent, key, iv, decryptedText);
-
-        // Muestra el texto desencriptado en la bandeja de entrada o donde desees
-        bandejaEntrada->setText(QString::fromStdString(decryptedText));
-    }
+void Server::descifrarTexto(bool checked) {
+    // Implementación para descifrar texto recibido del cliente y mostrarlo en bandejaEntrada
 }
 
 void Server::cargarArchivoEncriptado() {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Seleccionar archivo encriptado"), "", tr("Archivos de texto encriptados (*.txt)"));
-    if (!filePath.isEmpty()) {
-        std::ifstream encryptedFile(filePath.toStdString());
-        std::string encryptedContent((std::istreambuf_iterator<char>(encryptedFile)), std::istreambuf_iterator<char>());
-        encryptedFile.close();
-        qDebug()<<"EncryptedContent "<<encryptedContent;
-        // Realizar la desencriptación y mostrar el texto descifrado
-        unsigned char key[16];
-        unsigned char iv[AES_BLOCK_SIZE];
-        Encriptador::generarClaveYIV(key, iv);
-
-        std::string decryptedText;
-        qDebug("cualquier cosa");
-        Encriptador::decrypt(encryptedContent, key, iv, decryptedText);
-        qDebug()<<"DecryptedText " <<decryptedText;
-        // Muestra el texto desencriptado en la bandeja de entrada o donde desees
-        bandejaEntrada->setText(QString::fromStdString(decryptedText));
-    }
+    // Implementación para cargar un archivo encriptado del cliente y mostrarlo en bandejaEntrada
 }
 
+void Server::nuevaConexion() {
+    // Cuando hay una nueva conexión de un cliente
+    clienteSocket = tcpServer->nextPendingConnection();
+    connect(clienteSocket, &QTcpSocket::readyRead, this, &Server::recibirMensaje);
+    // Puedes conectar más señales y ranuras según tus necesidades
+}
+
+void Server::decrypt(const std::string& ciphertext, const unsigned char* key, const unsigned char* iv, std::string& decryptedText) {
+
+}
+
+void Server::manejarMensaje(const QString &mensaje) {
+    // Manejar el mensaje recibido, por ejemplo, mostrarlo en bandejaEntrada
+    bandejaEntrada->append(mensaje);
+}
