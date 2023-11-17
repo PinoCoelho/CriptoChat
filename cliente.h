@@ -24,6 +24,7 @@ public slots:
     void convertirTexto();
     void slotDatosRecibidos();
 
+
 signals:
     void enviarMensajeSignal(const QString &mensaje);
 

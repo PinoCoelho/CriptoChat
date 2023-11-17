@@ -4,6 +4,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <openssl/rand.h>
+#include <openssl/aes.h>
+#include <iostream>
 
 Server::Server(QWidget *parent) : QWidget(parent) {
     setupUI();
@@ -41,7 +43,25 @@ void Server::recibirMensaje() {
 }
 
 void Server::descifrarTexto(bool checked) {
-    // Implementación para descifrar texto recibido del cliente y mostrarlo en bandejaEntrada
+    // Obtener el texto encriptado de la bandeja de entrada
+    QString textoEncriptado = bandejaEntrada->toPlainText();
+    std::string textoEncriptadoStd = textoEncriptado.toStdString();
+
+    // Clave y vector de inicialización para AES (deberías cambiar estos valores según tus necesidades)
+    const unsigned char key[] = "0123456789abcdef";
+    const unsigned char iv[] = "0123456789abcdef";
+
+    // Texto descifrado (simulación simple)
+    std::string textoDescifrado;
+    decrypt(textoEncriptadoStd, key, iv, textoDescifrado);
+
+    // Mostrar el texto descifrado en la bandeja de entrada
+    bandejaEntrada->append("Texto Descifrado:\n" + QString::fromStdString(textoDescifrado));
+}
+
+void Server::decrypt(const std::string& ciphertext, const unsigned char* key, const unsigned char* iv, std::string& decryptedText) {
+    // Simulación simple de desencriptación
+    decryptedText = "Mensaje desencriptado: " + ciphertext + "\nClave: " + reinterpret_cast<const char*>(key) + "\nIV: " + reinterpret_cast<const char*>(iv);
 }
 
 void Server::cargarArchivoEncriptado() {
@@ -53,10 +73,6 @@ void Server::nuevaConexion() {
     clienteSocket = tcpServer->nextPendingConnection();
     connect(clienteSocket, &QTcpSocket::readyRead, this, &Server::recibirMensaje);
     // Puedes conectar más señales y ranuras según tus necesidades
-}
-
-void Server::decrypt(const std::string& ciphertext, const unsigned char* key, const unsigned char* iv, std::string& decryptedText) {
-
 }
 
 void Server::manejarMensaje(const QString &mensaje) {
