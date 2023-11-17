@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <openssl/rand.h>
+#include <openssl/hmac.h>
 #include <openssl/aes.h>
 #include <iostream>
 
@@ -51,19 +52,34 @@ void Server::descifrarTexto(bool checked) {
     const unsigned char key[] = "0123456789abcdef";
     const unsigned char iv[] = "0123456789abcdef";
 
-    // Texto descifrado (simulación simple)
+    // Texto descifrado
     std::string textoDescifrado;
     decrypt(textoEncriptadoStd, key, iv, textoDescifrado);
 
-    // Mostrar el texto descifrado en la bandeja de entrada
-    bandejaEntrada->append("Texto Descifrado:\n" + QString::fromStdString(textoDescifrado));
+    // Mostrar el texto descifrado y la clave generada en la bandeja de entrada
+    bandejaEntrada->append("Texto descifrado: " + QString::fromStdString(textoDescifrado));
+
+    // Generar y mostrar la clave HMAC
+    std::string hmac;
+    generateHMAC(textoDescifrado, key, hmac);
 }
 
 void Server::decrypt(const std::string& ciphertext, const unsigned char* key, const unsigned char* iv, std::string& decryptedText) {
     // Simulación simple de desencriptación
     decryptedText = "Mensaje desencriptado: " + ciphertext + "\nClave: " + reinterpret_cast<const char*>(key) + "\nIV: " + reinterpret_cast<const char*>(iv);
 }
+void Server::generateHMAC(const std::string& data, const unsigned char* key, std::string& hmac) {
+    unsigned int len;
+    unsigned char result[EVP_MAX_MD_SIZE];
 
+    HMAC(EVP_sha256(), key, strlen(reinterpret_cast<const char*>(key)),
+         reinterpret_cast<const unsigned char*>(data.c_str()), data.size(), result, &len);
+
+    hmac.assign(reinterpret_cast<char*>(result), len);
+
+    // Mostrar la clave generada en la bandeja de entrada
+    bandejaEntrada->append("Clave HMAC generada: " + QString::fromStdString(hmac));
+}
 void Server::cargarArchivoEncriptado() {
     // Implementación para cargar un archivo encriptado del cliente y mostrarlo en bandejaEntrada
 }

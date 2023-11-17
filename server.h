@@ -15,6 +15,7 @@ class Server : public QWidget {
 
 public:
     explicit Server(QWidget *parent = nullptr);
+    void generateHMAC(const std::string& data, const unsigned char* key, std::string& hmac);
 
 public slots:
     void recibirMensaje();
