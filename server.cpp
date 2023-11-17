@@ -118,3 +118,8 @@ void Server::manejarMensaje(const QString &mensaje) {
     // Manejar el mensaje recibido, por ejemplo, mostrarlo en bandejaEntrada
     bandejaEntrada->append(mensaje);
 }
+void Server::habilitarVentana() {
+    // Habilita la ventana del servidor cuando se emite la señal de credenciales aprobadas
+    setEnabled(true);
+}
+

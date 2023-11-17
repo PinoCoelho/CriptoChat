@@ -24,6 +24,7 @@ public slots:
     void cargarArchivoEncriptado();
     void manejarMensaje(const QString &mensaje);
     void decrypt(const std::string& ciphertext, const unsigned char* key, const unsigned char* iv, std::string& decryptedText);
+    void habilitarVentana();
 
 private:
     QTextEdit *bandejaEntrada;

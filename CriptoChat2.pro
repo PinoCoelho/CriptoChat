@@ -9,6 +9,7 @@ CONFIG += c++17
 SOURCES += \
     cliente.cpp \
     encriptar.cpp \
+    loginwindow.cpp \
     main.cpp \
     mainwindow.cpp \
     server.cpp
@@ -16,6 +17,7 @@ SOURCES += \
 HEADERS += \
     cliente.h \
     encriptar.h \
+    loginwindow.h \
     mainwindow.h \
     server.h
 
