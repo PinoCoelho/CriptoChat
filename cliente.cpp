@@ -104,3 +104,5 @@ void Cliente::convertirTexto() {
     mensajeInput->setText(QString::fromStdString(textoEncriptado));
 }
 
+
+

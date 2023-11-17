@@ -7,8 +7,9 @@
 #include <openssl/hmac.h>
 #include <openssl/aes.h>
 #include <iostream>
+#include <bitset>
 
-Server::Server(QWidget *parent) : QWidget(parent) {
+    Server::Server(QWidget *parent) : QWidget(parent) {
     setupUI();
 }
 
@@ -81,9 +82,31 @@ void Server::generateHMAC(const std::string& data, const unsigned char* key, std
     bandejaEntrada->append("Clave HMAC generada: " + QString::fromStdString(hmac));
 }
 void Server::cargarArchivoEncriptado() {
-    // Implementación para cargar un archivo encriptado del cliente y mostrarlo en bandejaEntrada
-}
+    // Obtener el texto encriptado de la bandeja de entrada
+    QString textoEncriptado = bandejaEntrada->toPlainText();
+    std::string textoEncriptadoStd = textoEncriptado.toStdString();
 
+    // Realizar el algoritmo de duplicación de bits
+    std::string textoCorregido;
+    for (char byte : textoEncriptadoStd) {
+        std::bitset<8> bits(byte);
+
+        // Duplicar cada bit
+        std::bitset<16> bitsDuplicados;
+        for (int j = 0; j < 8; ++j) {
+            bitsDuplicados.set(2 * j, bits[j]);
+            bitsDuplicados.set(2 * j + 1, bits[j]);
+        }
+
+        // Convertir bits duplicados a char y agregar al texto corregido
+        char byteDuplicado = static_cast<char>(bitsDuplicados.to_ulong());
+        textoCorregido.push_back(byteDuplicado);
+    }
+
+    // Mostrar el texto corregido en la bandeja de entrada
+    bandejaEntrada->clear();
+    bandejaEntrada->append(QString::fromStdString(textoCorregido));
+}
 void Server::nuevaConexion() {
     // Cuando hay una nueva conexión de un cliente
     clienteSocket = tcpServer->nextPendingConnection();
